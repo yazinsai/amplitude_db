@@ -12,7 +12,11 @@
 
 ActiveRecord::Schema.define(version: 2019_12_09_142326) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "events", force: :cascade do |t|
+    t.bigint "event_id", null: false
     t.string "uuid"
     t.string "user_id"
     t.string "device_id"
@@ -28,6 +32,7 @@ ActiveRecord::Schema.define(version: 2019_12_09_142326) do
     t.datetime "event_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_events_on_event_id", unique: true
   end
 
 end

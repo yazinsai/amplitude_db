@@ -26,9 +26,10 @@ class SyncService
     end
 
     def period
+      # data become available on server within 4 hours
       {
-        start: (DateTime.now - 24.hour),
-        end: DateTime.now
+        start: (DateTime.now - 8.hours),
+        end: (DateTime.now - 4.hours)
       }.transform_values{ |d| d.strftime("%Y%m%dT%H") }
     end
 
@@ -37,7 +38,11 @@ class SyncService
     def parse_dump
       Dir["#{LAST_SYNC_FOLDER}/*"].each do |filepath|
         JSON.parse(File.read(filepath)).each do |hash|
-          create_event(hash)
+          begin
+            Event.create hash.slice(*EVENT_FIELDS)
+          rescue => ex
+            next
+          end          
         end
       end
     end
@@ -49,16 +54,14 @@ class SyncService
       end
     end
 
-    def create_event(hash)
-      Event.create hash.slice(*EVENT_FIELDS)
-    end
-
     def format(str)
       str.insert(0,'[').insert(-1,']').gsub("\n",'').gsub(/}{/,"},{")        
     end
 
     def clear_dir
-      
+      unless Dir.empty?(LAST_SYNC_FOLDER)
+        FileUtils.rm_rf(Dir["#{LAST_SYNC_FOLDER}/*"])
+      end
     end
 
     def extract_json(entry)

@@ -1,6 +1,7 @@
 class CreateEvents < ActiveRecord::Migration[5.2]
   def change
     create_table :events do |t|
+      t.bigint :event_id, null: false
       t.string :uuid
       t.string :user_id
       t.string :device_id
@@ -22,6 +23,7 @@ class CreateEvents < ActiveRecord::Migration[5.2]
       t.datetime :event_time     
 
       t.timestamps
+      t.index :event_id, unique: true
     end
   end
 end
