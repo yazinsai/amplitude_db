@@ -17,6 +17,8 @@
 !/log/.keep
 !/tmp/.keep
 
+/last_sync_data/*
+
 # Ignore uploaded files in development
 /storage/*
 !/storage/.keep
