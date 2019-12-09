@@ -3,32 +3,62 @@ require 'zip'
 class SyncService
   BASE_URL = 'https://amplitude.com/api/2/export'
   LAST_SYNC_FOLDER = 'last_sync_data'
+  EVENT_FIELDS = %w(
+    uuid
+    user_id
+    device_id
+    email
+    device_type
+    event_type
+    event_properties
+    data
+    country
+    region
+    city
+    referrer
+    event_time   
+  )
   class << self
     def sync
       clear_dir
+      download_dump
+      parse_dump      
+    end
+
+    def period
+      {
+        start: (DateTime.now - 24.hour),
+        end: DateTime.now
+      }.transform_values{ |d| d.strftime("%Y%m%dT%H") }
+    end
+
+    private
+
+    def parse_dump
+      Dir["#{LAST_SYNC_FOLDER}/*"].each do |filepath|
+        JSON.parse(File.read(filepath)).each do |hash|
+          create_event(hash)
+        end
+      end
+    end
+
+    def download_dump
       response = client.get('', period)
       Zip::File.open_buffer(response.body) do |zip|
         zip.each{ |entry| extract_json(entry) }
       end
     end
 
-    def period
-      {
-        start: '20191205T09',#(DateTime.now - 24.hour),
-        end: '20191205T10'#DateTime.now
-      }#.transform_values{ |d| d.strftime("%Y%m%dT%H") }
+    def create_event(hash)
+      Event.create hash.slice(*EVENT_FIELDS)
     end
-
-    private
 
     def format(str)
       str.insert(0,'[').insert(-1,']').gsub("\n",'').gsub(/}{/,"},{")        
     end
 
     def clear_dir
-      unless Dir.empty?(LAST_SYNC_FOLDER)
-        FileUtils.rm_rf(Dir["#{LAST_SYNC_FOLDER}/*"])
-      end
+      
     end
 
     def extract_json(entry)
