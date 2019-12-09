@@ -3,21 +3,6 @@ require 'zip'
 class SyncService
   BASE_URL = 'https://amplitude.com/api/2/export'
   LAST_SYNC_FOLDER = 'last_sync_data'
-  EVENT_FIELDS = %w(
-    uuid
-    user_id
-    device_id
-    email
-    device_type
-    event_type
-    event_properties
-    data
-    country
-    region
-    city
-    referrer
-    event_time   
-  )
   class << self
     def sync
       clear_dir
@@ -39,7 +24,7 @@ class SyncService
       Dir["#{LAST_SYNC_FOLDER}/*"].each do |filepath|
         JSON.parse(File.read(filepath)).each do |hash|
           begin
-            Event.create hash.slice(*EVENT_FIELDS)
+            Event.create hash.slice(*Event.column_names)
           rescue => ex
             next
           end          
