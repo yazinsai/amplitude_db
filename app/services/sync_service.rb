@@ -4,18 +4,15 @@ class SyncService
   BASE_URL = 'https://amplitude.com/api/2/export'
   LAST_SYNC_FOLDER = 'last_sync_data'
   class << self
-    def sync
+    def sync(from: (DateTime.now - 8.hours), to: (DateTime.now - 4.hours))
       clear_dir
-      download_dump
+      download_dump(from, to)
       parse_dump      
     end
 
-    def period
-      # data become available on server within 4 hours
-      {
-        start: (DateTime.now - 8.hours),
-        end: (DateTime.now - 4.hours)
-      }.transform_values{ |d| d.strftime("%Y%m%dT%H") }
+    def period(from, to)
+      { start: from, end: to }
+        .transform_values{ |d| d.strftime("%Y%m%dT%H") }
     end
 
     private
@@ -32,8 +29,9 @@ class SyncService
       end
     end
 
-    def download_dump
-      response = client.get('', period)
+    def download_dump(from, to)
+      response = client.get('', period(from,to) )
+      puts response.status, response.body
       Zip::File.open_buffer(response.body) do |zip|
         zip.each{ |entry| extract_json(entry) }
       end
