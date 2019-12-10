@@ -60,7 +60,7 @@ class SyncService
     end
 
     def client
-      Faraday.new(url: BASE_URL) do |conn|
+      Faraday.new(url: BASE_URL, request: { timeout: 3_600 }) do |conn|
         conn.adapter Faraday.default_adapter
         conn.basic_auth(ENV['AMPLITUDE_API_KEY'], ENV['AMPLITUDE_SECRET_KEY'])
       end
