@@ -6,13 +6,8 @@ class SyncService
   class << self
     def sync(from: (DateTime.now - 8.hours), to: (DateTime.now - 4.hours))
       clear_dir
-      download_dump(from, to)
+      extract_data download_dump(from, to)      
       parse_dump      
-    end
-
-    def period(from, to)
-      { start: from, end: to }
-        .transform_values{ |d| d.strftime("%Y%m%dT%H") }
     end
 
     private
@@ -30,9 +25,20 @@ class SyncService
     end
 
     def download_dump(from, to)
-      response = client.get('', period(from,to) )
-      puts response.status, response.body
-      Zip::File.open_buffer(response.body) do |zip|
+      # It returns 404 if there is no stats for specified period
+      response = OpenStruct.new(status: nil)
+      until response.status == 200 do
+        period = { start: from, end: to }
+          .transform_values{ |d| d.strftime("%Y%m%dT%H") }
+        response = client.get('', period)
+        from -= 1.hour
+        to -= 1.hour
+      end
+      response.body
+    end
+
+    def extract_data(dump)
+      Zip::File.open_buffer(dump) do |zip|
         zip.each{ |entry| extract_json(entry) }
       end
     end
