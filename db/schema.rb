@@ -16,15 +16,16 @@ ActiveRecord::Schema.define(version: 2019_12_09_142326) do
   enable_extension "plpgsql"
 
   create_table "events", force: :cascade do |t|
-    t.bigint "event_id", null: false
-    t.string "uuid"
+    t.bigint "event_id"
+    t.string "uuid", null: false
     t.string "user_id"
     t.string "device_id"
     t.string "email"
     t.string "device_type"
     t.string "event_type"
-    t.text "event_properties"
-    t.text "data"
+    t.json "event_properties"
+    t.json "user_properties"
+    t.json "data"
     t.string "country"
     t.string "region"
     t.string "city"
@@ -32,7 +33,7 @@ ActiveRecord::Schema.define(version: 2019_12_09_142326) do
     t.datetime "event_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["event_id"], name: "index_events_on_event_id", unique: true
+    t.index ["uuid"], name: "index_events_on_uuid", unique: true
   end
 
 end
