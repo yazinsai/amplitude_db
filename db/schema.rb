@@ -10,18 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_09_142326) do
+ActiveRecord::Schema.define(version: 2019_12_11_142326) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "events", force: :cascade do |t|
-    t.bigint "event_id"
-    t.string "uuid", null: false
-    t.string "user_id"
-    t.string "device_id"
-    t.string "email"
+  create_table "devices", id: false, force: :cascade do |t|
+    t.string "device_id", null: false
     t.string "device_type"
+    t.string "device_family"
+    t.string "device_model"
+    t.string "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["device_id"], name: "index_devices_on_device_id", unique: true
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "uuid", null: false
+    t.string "device_id", null: false
     t.string "event_type"
     t.json "event_properties"
     t.json "user_properties"
@@ -36,4 +43,15 @@ ActiveRecord::Schema.define(version: 2019_12_09_142326) do
     t.index ["uuid"], name: "index_events_on_uuid", unique: true
   end
 
+  create_table "users", id: false, force: :cascade do |t|
+    t.string "user_id", null: false
+    t.string "email"
+    t.string "ref"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_users_on_user_id", unique: true
+  end
+
+  add_foreign_key "devices", "users", primary_key: "user_id"
+  add_foreign_key "events", "devices", primary_key: "device_id"
 end

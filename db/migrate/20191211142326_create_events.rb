@@ -1,13 +1,8 @@
 class CreateEvents < ActiveRecord::Migration[5.2]
   def change
     create_table :events do |t|
-      t.bigint :event_id
       t.string :uuid, null: false
-      t.string :user_id
-      t.string :device_id
-      t.string :email
-
-      t.string :device_type
+      t.string :device_id, null: false
 
       t.string :event_type
 
@@ -26,5 +21,6 @@ class CreateEvents < ActiveRecord::Migration[5.2]
       t.timestamps
       t.index :uuid, unique: true
     end
+    add_foreign_key :events, :devices, column: 'device_id', primary_key: 'device_id'
   end
 end
