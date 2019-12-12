@@ -13,7 +13,7 @@ class SyncService
   
   def sync
     Extractor.new(download_dump, keep_last: keep_last)
-      .extract.then{ |hashes| parse(hashes) }    
+      .extract.then{ |hashes| Modeler.new(hashes).mold }
   end
 
   private
@@ -23,8 +23,8 @@ class SyncService
     response = OpenStruct.new(status: nil)
     until response.status == 200 do
       response = client.get('', period)
-      from_time -= 1.hour
-      to_time -= 1.hour
+      @from_time -= 1.hour
+      @to_time -= 1.hour
     end
     response.body
   end
@@ -37,7 +37,7 @@ class SyncService
   end
 
   def period
-    { start: from, end: to }
+    { start: from_time, end: to_time }
       .transform_values{ |d| d.strftime("%Y%m%dT%H") }
   end
 end

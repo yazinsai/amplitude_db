@@ -2,6 +2,6 @@ class SyncWorker
   include Sidekiq::Worker
 
   def perform
-    SyncService.sync
+    SyncService.new.sync
   end
 end
