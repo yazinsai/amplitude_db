@@ -35,7 +35,6 @@ class SyncService
     end
 
     def create_user(device_id, user_id = nil, user_properties = nil)
-      byebug
       ( find_user_by(device_id: device_id) || find_user_by(user_id: user_id) )
         .tap{ |user| update_user_fields(user, user_id, user_properties) }
     end
