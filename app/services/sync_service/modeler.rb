@@ -16,8 +16,8 @@ class SyncService
           device = create_device(device_params, user)
 
           create_event(hash, device)
-        rescue => ex
-          next
+        rescue ActiveRecord::RecordNotUnique => ex
+          next # Event already processed
         end          
       end
     end
