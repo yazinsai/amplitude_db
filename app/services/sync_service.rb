@@ -12,8 +12,9 @@ class SyncService
   end
   
   def sync
-    Extractor.new(download_dump, keep_last: keep_last)
-      .extract.then{ |hashes| Modeler.new(hashes).mold }
+    Extractor.new(download_dump).extract
+      .map(&JSON.method(:parse))
+      .then{ |hashes| Modeler.new(hashes).mold }
   end
 
   private

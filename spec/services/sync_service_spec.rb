@@ -1,32 +1,25 @@
 require 'rails_helper'
 
 RSpec.describe SyncService do
-  describe 'extraction' do
+  describe SyncService::Extractor do
     let(:zipped_data) { File.read('spec/spec_data/archive.zip') }
-    let(:json_data) do
-      [
-        {
-          "one" => "1",
-          "two" => "2"
-        },
-        {
-          "three" => "3",
-          "four" => "4"
-        },
-        {
-          "1" => "one",
-          "2" => "two"
-        },
-        {
-          "3" => "three",
-          "4" => "four"
-        }
-      ]
+    let(:extractor) { SyncService::Extractor.new(zipped_data) }
+
+    describe '#extract_zip' do
+      after { FileUtils.rm_rf(Dir["download/*"]) }
+
+      it 'extract files from archive to default path' do
+        extractor.extract_zip
+        expect(Dir["download/*"]).to eq ["download/second.json.gz", "download/first.json.gz"]
+      end
     end
 
-    it 'extracts properly' do
-      extracted_data = SyncService::Extractor.new(zipped_data).extract
-      expect(extracted_data).to eq json_data
+    describe '#extract_gz' do      
+      # 252120_2019-12-11_10#912.json.gz in spec/spec_data folder contains 6 lines that are json objects
+      it 'extract properly' do
+        data = extractor.extract_gz(Dir["spec/spec_data/*.gz"])
+        expect(data.count).to eq 6
+      end
     end
   end
 
