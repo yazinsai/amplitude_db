@@ -27,6 +27,7 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'rubyzip'
 gem 'sidekiq'
 gem 'sidekiq-cron', '~> 1.1'
+gem 'multiple_files_gzip_reader'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
