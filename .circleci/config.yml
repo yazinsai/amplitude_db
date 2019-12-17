@@ -80,7 +80,7 @@ jobs: # a collection of steps
           name: "Deploy to amplitude.askamal.com"
           no_output_timeout: 20m
           command: |
-            git remote add amplitude dokku@ec2-52-58-213-81.eu-central-1.compute.amazonaws.com:app
+            git remote add amplitude dokku@ec2-52-58-213-81.eu-central-1.compute.amazonaws.com:amplitude
             git push amplitude master -f
 
 workflows:
