@@ -1,0 +1,6 @@
+[defaults]
+org = askamal
+project = amplitudedb
+
+[auth]
+token = 2bf6c26e20b411eaa1554201c0a8d02a
