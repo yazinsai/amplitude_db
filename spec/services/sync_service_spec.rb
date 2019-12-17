@@ -10,7 +10,7 @@ RSpec.describe SyncService do
 
       it 'extract files from archive to default path' do
         extractor.extract_zip
-        expect(Dir["download/*"]).to eq ["download/second.json.gz", "download/first.json.gz"]
+        expect(Dir["download/*"].sort).to eq ["download/second.json.gz", "download/first.json.gz"].sort
       end
     end
 
