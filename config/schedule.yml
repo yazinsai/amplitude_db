@@ -1,0 +1,4 @@
+# every 4th hour
+sync_service:
+  cron: "0 */4 * * *"
+  class: "SyncWorker"
