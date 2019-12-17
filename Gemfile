@@ -23,7 +23,7 @@ gem 'puma', '~> 3.11'
 # gem 'capistrano-rails', group: :development
 
 gem 'faraday'
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'dotenv-rails'
 gem 'rubyzip'
 gem 'sidekiq'
 gem 'sidekiq-cron', '~> 1.1'
