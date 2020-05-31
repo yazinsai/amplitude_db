@@ -5,13 +5,11 @@ default: &default
 development:
   <<: *default
   database: amplitude_db_development
-  
+
 test:
   <<: *default
   database: amplitude_db_test
 
 production:
   <<: *default
-  database: amplitude_db_production
-  username: amplitude_db
-  password: <%= ENV['AMPLITUDE_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>

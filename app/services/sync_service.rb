@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'zip'
 
 class SyncService
@@ -10,11 +12,11 @@ class SyncService
     @to_time = to_time
     @keep_last = keep_last
   end
-  
+
   def sync
     Extractor.new(download_dump).extract
-      .map(&JSON.method(:parse))
-      .then{ |hashes| Modeler.new(hashes).mold }
+             .map(&JSON.method(:parse))
+             .then { |hashes| Modeler.new(hashes).mold }
   end
 
   private
@@ -22,7 +24,7 @@ class SyncService
   def download_dump
     # It returns 404 if there is no stats for specified period
     response = OpenStruct.new(status: nil)
-    until response.status == 200 do
+    until response.status == 200
       response = client.get('', period)
       @from_time -= 1.hour
       @to_time -= 1.hour
@@ -39,6 +41,6 @@ class SyncService
 
   def period
     { start: from_time, end: to_time }
-      .transform_values{ |d| d.strftime("%Y%m%dT%H") }
+      .transform_values { |d| d.strftime('%Y%m%dT%H') }
   end
 end
