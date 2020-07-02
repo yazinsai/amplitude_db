@@ -1,12 +1,17 @@
 # README
 
+## Reference
+
+- [Query reference](https://help.amplitude.com/hc/en-us/articles/206964247-Redshift-Active-Users#h_d34a3e4d-8f0a-47f8-a264-a310efcaf355)
+- [Column descriptions](https://help.amplitude.com/hc/en-us/articles/115001902492#h_42dfcc85-074f-439b-8864-62998f06152d)
+
 ## Merging device_id with user
 
-Here's a sample event sequence showing how we merge two device sessions across our website and our Rails backend. 
+Here's a sample event sequence showing how we merge two device sessions across our website and our Rails backend.
 
 1. The user browses the website (with a device_id of `f112be19-18c6-43c3-9457-b733cae9c8b5R`), providing his email as well as referrer details
 2. The device_id on the Rails backend receives the first "Get Started" event with an unfamiliar device_id `dde42221-b62c-561c-8a1d-bfcb2b77442e`
-3. The two device_ids are merged on the same user through the `link_website_device_id_to_user` call, which associates the website device_id we pass (`f112be19-18c6-43c3-9457-b733cae9c8b5R`) with the user_id. Note that the 
+3. The two device_ids are merged on the same user through the `link_website_device_id_to_user` call, which associates the website device_id we pass (`f112be19-18c6-43c3-9457-b733cae9c8b5R`) with the user_id. Note that the
 
 ```json
 [

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SyncService
   class Modeler
     attr_reader :params_ary
@@ -7,23 +9,21 @@ class SyncService
     end
 
     def mold
-      params_ary.each do |hash|        
-        begin
-          user_params = hash.slice('device_id', 'user_id', 'user_properties').values
-          user = create_user(*user_params)
+      params_ary.each do |hash|
+        user_params = hash.slice('device_id', 'user_id', 'user_properties').values
+        user = create_user(*user_params)
 
-          device_params = hash.slice(*Device.column_names)
-          device = create_device(device_params, user)
+        device_params = hash.slice(*Device.column_names)
+        device = create_device(device_params, user)
 
-          create_event(hash, device)
-        rescue ActiveRecord::RecordNotUnique => ex
-          next # Event already processed
-        end          
+        create_event(hash, device)
+      rescue ActiveRecord::RecordNotUnique => e
+        next # Event already processed
       end
     end
 
     def create_event(params, device)
-      event_params = params.slice(*Event.column_names).merge({'device' => device})
+      event_params = params.slice(*Event.column_names).merge({ 'device' => device })
       Event.create(event_params)
     end
 
@@ -35,8 +35,8 @@ class SyncService
     end
 
     def create_user(device_id, user_id = nil, user_properties = nil)
-      ( find_user_by(device_id: device_id) || find_user_by(user_id: user_id) )
-        .tap{ |user| update_user_fields(user, user_id, user_properties) }
+      (find_user_by(device_id: device_id) || find_user_by(user_id: user_id))
+        .tap { |user| update_user_fields(user, user_id, user_properties) }
     end
 
     private
@@ -51,7 +51,7 @@ class SyncService
 
     def update_user_fields(user, user_id, user_properties)
       if user_id.present? && user.amplitude_user_id.match?(/^\d+$/)
-        # update with amal's app uuid 
+        # update with amal's app uuid
         user.update(amplitude_user_id: user_id)
       end
       assign_unless_present(user, user_properties, 'email', 'ref')
@@ -59,7 +59,8 @@ class SyncService
 
     def assign_unless_present(to, from, *fields)
       return unless to.present? && from.present?
-      fields.each{ |f| to[f] = from[f] unless to[f].present? }
+
+      fields.each { |f| to[f] = from[f] unless to[f].present? }
       to.save
     end
   end
